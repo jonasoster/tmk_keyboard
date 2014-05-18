@@ -91,15 +91,15 @@ static const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KEYMAP(  // layer 0 : default
         // left hand
         EQL, 1,   2,   3,   4,   5,   ESC,
-        BSLS,Q,   W,   E,   R,   T,   FN2,
-        TAB, A,   S,   D,   F,   G,
+        TAB ,Q,   W,   E,   R,   T,   FN2,
+        BSLS,A,   S,   D,   F,   G,
         LSFT,Z,   X,   C,   V,   B,   FN1,
         LGUI,GRV, BSLS,LEFT,RGHT,
                                       LCTL,LALT,
                                            HOME,
                                  BSPC,DEL, END,
         // right hand
-             FN3, 6,   7,   8,   9,   0,   MINS,
+             GRV, 6,   7,   8,   9,   0,   MINS,
              LBRC,Y,   U,   I,   O,   P,   RBRC,
                   H,   J,   K,   L,   SCLN,QUOT,
              FN1, N,   M,   COMM,DOT, SLSH,RSFT,
@@ -112,17 +112,17 @@ static const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KEYMAP(  // layer 1 : function and symbol keys
         // left hand
         TRNS,F1,  F2,  F3,  F4,  F5,  F11,
-        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,FN4,
-        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,
-        TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,
+        TRNS,TRNS,MPRV,MPLY,MNXT,TRNS,FN4,
+        TRNS,TRNS,TRNS,MINS,TRNS,TRNS,
+        TRNS,TRNS,VOLD,MUTE,VOLU,TRNS,TRNS,
         TRNS,TRNS,TRNS,TRNS,TRNS,
                                       TRNS,TRNS,
                                            TRNS,
                                  TRNS,TRNS,TRNS,
         // right hand
              F12, F6,  F7,  F8,  F9,  F10, TRNS,
-             TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,
-                  TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,
+             TRNS,TRNS,TRNS,FN7 ,FN8 ,TRNS,TRNS,
+                  TRNS,TRNS,FN5 ,FN6 ,TRNS,TRNS,
              TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,
                        TRNS,TRNS,TRNS,TRNS,TRNS,
         TRNS,TRNS,
@@ -188,6 +188,10 @@ static const uint16_t PROGMEM fn_actions[] = {
     ACTION_LAYER_SET(2, ON_PRESS),                  // FN2 - push Layer2
     ACTION_LAYER_SET(3, ON_PRESS),                  // FN3 - push Layer3
     ACTION_LAYER_SET(0, ON_PRESS),                  // FN4 - push Layer0
+    ACTION_MODS_KEY(MOD_LSFT, KC_9), 		    // FN5 - shift 9 = (
+    ACTION_MODS_KEY(MOD_LSFT, KC_0), 		    // FN6 - shift 0 = )
+    ACTION_MODS_KEY(MOD_LSFT, KC_COMM),		    // FN7 - shift , = <
+    ACTION_MODS_KEY(MOD_LSFT, KC_DOT), 		    // FN8 - shift . = >
 };
 
 void action_function(keyrecord_t *event, uint8_t id, uint8_t opt)
