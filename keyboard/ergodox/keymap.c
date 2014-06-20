@@ -123,7 +123,7 @@ static const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
              F12, F6,  F7,  F8,  F9,  F10, TRNS,
              TRNS,TRNS,TRNS,FN7 ,FN8 ,TRNS,TRNS,
                   TRNS,TRNS,FN5 ,FN6 ,TRNS,TRNS,
-             TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,TRNS,
+             TRNS,FN9 ,FN10,FN11,FN12,FN13,TRNS,
                        TRNS,TRNS,TRNS,TRNS,TRNS,
         TRNS,TRNS,
         TRNS,
@@ -177,31 +177,109 @@ static const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* id for user defined functions */
 enum function_id {
     TEENSY_KEY,
+    UNI_SHARPS,
+    UNI_AA,
+    UNI_AE,
+    UNI_OE,
+    UNI_UE
 };
 
 /*
  * Fn action definition
  */
 static const uint16_t PROGMEM fn_actions[] = {
-    ACTION_FUNCTION(TEENSY_KEY),                    // FN0 - Teensy key
-    ACTION_LAYER_MOMENTARY(1),                      // FN1 - switch to Layer1
-    ACTION_LAYER_SET(2, ON_PRESS),                  // FN2 - push Layer2
-    ACTION_LAYER_SET(3, ON_PRESS),                  // FN3 - push Layer3
-    ACTION_LAYER_SET(0, ON_PRESS),                  // FN4 - push Layer0
-    ACTION_MODS_KEY(MOD_LSFT, KC_9), 		    // FN5 - shift 9 = (
-    ACTION_MODS_KEY(MOD_LSFT, KC_0), 		    // FN6 - shift 0 = )
-    ACTION_MODS_KEY(MOD_LSFT, KC_COMM),		    // FN7 - shift , = <
-    ACTION_MODS_KEY(MOD_LSFT, KC_DOT), 		    // FN8 - shift . = >
+    [0] = ACTION_FUNCTION(TEENSY_KEY),                    // FN0 - Teensy key
+    [1] = ACTION_LAYER_MOMENTARY(1),                      // FN1 - switch to Layer1
+    [2] = ACTION_LAYER_SET(2, ON_PRESS),                  // FN2 - push Layer2
+    [3] = ACTION_LAYER_SET(3, ON_PRESS),                  // FN3 - push Layer3
+    [4] = ACTION_LAYER_SET(0, ON_PRESS),                  // FN4 - push Layer0
+    [5] = ACTION_MODS_KEY(MOD_LSFT, KC_9), 		    // FN5 - shift 9 = (
+    [6] = ACTION_MODS_KEY(MOD_LSFT, KC_0), 		    // FN6 - shift 0 = )
+    [7] = ACTION_MODS_KEY(MOD_LSFT, KC_COMM),		    // FN7 - shift , = <
+    [8] = ACTION_MODS_KEY(MOD_LSFT, KC_DOT), 		    // FN8 - shift . = >
+    [9] = ACTION_FUNCTION(UNI_SHARPS),
+    [10] = ACTION_FUNCTION(UNI_AA),
+    [11] = ACTION_FUNCTION(UNI_AE),
+    [12] = ACTION_FUNCTION(UNI_OE),
+    [13] = ACTION_FUNCTION(UNI_UE),
 };
 
-void action_function(keyrecord_t *event, uint8_t id, uint8_t opt)
+#define MACRO_UNI_SHARPS_CAPITAL MACRO( I(0), D(LSFT), T(S), T(S), U(LSFT), END )
+#define MACRO_UNI_AA_CAPITAL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
+			    T(0), T(0), T(C), T(5), T(ENT), END )
+#define MACRO_UNI_AE_CAPITAL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
+			    T(0), T(0), T(C), T(4), T(ENT), END )
+#define MACRO_UNI_OE_CAPITAL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
+			    T(0), T(0), T(D), T(6), T(ENT), END )
+#define MACRO_UNI_UE_CAPITAL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
+			    T(0), T(0), T(D), T(C), T(ENT), END )
+#define MACRO_UNI_SHARPS_SMALL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
+				T(0), T(0), T(D), T(F), T(ENT), END )
+#define MACRO_UNI_AA_SMALL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
+			    T(0), T(0), T(E), T(5), T(ENT), END )
+#define MACRO_UNI_AE_SMALL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
+			    T(0), T(0), T(E), T(4), T(ENT), END )
+#define MACRO_UNI_OE_SMALL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
+			    T(0), T(0), T(F), T(6), T(ENT), END )
+#define MACRO_UNI_UE_SMALL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
+			    T(0), T(0), T(F), T(C), T(ENT), END )
+
+void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
+    keyevent_t event = record->event;
+    uint8_t shift_pressed = get_mods() & (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT));
+
     if (id == TEENSY_KEY) {
         clear_keyboard();
         print("\n\nJump to bootloader... ");
         _delay_ms(250);
         bootloader_jump(); // should not return
         print("not supported.\n");
+    }
+
+    if (!event.pressed) {
+	    return;
+    }
+
+
+    if (shift_pressed) {
+	    del_mods(shift_pressed);
+	    switch (id) {
+	    case UNI_SHARPS:
+		    action_macro_play(MACRO_UNI_SHARPS_CAPITAL);
+		    break;
+	    case UNI_AA:
+		    action_macro_play(MACRO_UNI_AA_CAPITAL);
+		    break;
+	    case UNI_AE:
+		    action_macro_play(MACRO_UNI_AE_CAPITAL);
+		    break;
+	    case UNI_OE:
+		    action_macro_play(MACRO_UNI_OE_CAPITAL);
+		    break;
+	    case UNI_UE:
+		    action_macro_play(MACRO_UNI_UE_CAPITAL);
+		    break;
+	    }
+	    add_mods(shift_pressed);
+    } else {
+	    switch (id) {
+	    case UNI_SHARPS:
+		    action_macro_play(MACRO_UNI_SHARPS_SMALL);
+		    break;
+	    case UNI_AA:
+		    action_macro_play(MACRO_UNI_AA_SMALL);
+		    break;
+	    case UNI_AE:
+		    action_macro_play(MACRO_UNI_AE_SMALL);
+		    break;
+	    case UNI_OE:
+		    action_macro_play(MACRO_UNI_OE_SMALL);
+		    break;
+	    case UNI_UE:
+		    action_macro_play(MACRO_UNI_UE_SMALL);
+		    break;
+	    }
     }
 }
 
