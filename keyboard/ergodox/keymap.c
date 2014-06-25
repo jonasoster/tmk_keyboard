@@ -206,23 +206,23 @@ static const uint16_t PROGMEM fn_actions[] = {
 
 #define MACRO_UNI_SHARPS_CAPITAL MACRO( I(0), D(LSFT), T(S), T(S), U(LSFT), END )
 #define MACRO_UNI_AA_CAPITAL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
-			    T(0), T(0), T(C), T(5), T(ENT), END )
+			    T(0), T(0), T(C), T(5), T(SPC), END )
 #define MACRO_UNI_AE_CAPITAL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
-			    T(0), T(0), T(C), T(4), T(ENT), END )
+			    T(0), T(0), T(C), T(4), T(SPC), END )
 #define MACRO_UNI_OE_CAPITAL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
-			    T(0), T(0), T(D), T(6), T(ENT), END )
+			    T(0), T(0), T(D), T(6), T(SPC), END )
 #define MACRO_UNI_UE_CAPITAL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
-			    T(0), T(0), T(D), T(C), T(ENT), END )
+			    T(0), T(0), T(D), T(C), T(SPC), END )
 #define MACRO_UNI_SHARPS_SMALL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
-				T(0), T(0), T(D), T(F), T(ENT), END )
+				T(0), T(0), T(D), T(F), T(SPC), END )
 #define MACRO_UNI_AA_SMALL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
-			    T(0), T(0), T(E), T(5), T(ENT), END )
+			    T(0), T(0), T(E), T(5), T(SPC), END )
 #define MACRO_UNI_AE_SMALL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
-			    T(0), T(0), T(E), T(4), T(ENT), END )
+			    T(0), T(0), T(E), T(4), T(SPC), END )
 #define MACRO_UNI_OE_SMALL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
-			    T(0), T(0), T(F), T(6), T(ENT), END )
+			    T(0), T(0), T(F), T(6), T(SPC), END )
 #define MACRO_UNI_UE_SMALL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
-			    T(0), T(0), T(F), T(C), T(ENT), END )
+			    T(0), T(0), T(F), T(C), T(SPC), END )
 
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
