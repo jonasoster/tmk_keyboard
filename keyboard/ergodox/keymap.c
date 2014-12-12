@@ -112,7 +112,7 @@ static const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KEYMAP(  // layer 1 : function and symbol keys
         // left hand
         TRNS,F1,  F2,  F3,  F4,  F5,  F11,
-        TRNS,TRNS,MPRV,MPLY,MNXT,TRNS,FN2,
+        TRNS,TRNS,MPRV,MPLY,MNXT,TRNS,TRNS,
         TRNS,TRNS,TRNS,MINS,TRNS,TRNS,
         TRNS,TRNS,VOLD,MUTE,VOLU,TRNS,TRNS,
         TRNS,TRNS,TRNS,TRNS,TRNS,
@@ -120,8 +120,8 @@ static const uint8_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                            TRNS,
                                  TRNS,TRNS,TRNS,
         // right hand
-             F12, F6,  F7,  F8,  F9,  F10, TRNS,
-             TRNS,TRNS,TRNS,FN7 ,FN8 ,TRNS,TRNS,
+             F12, F6,  F7,  F8,  F9,  F10, FN2,
+             TRNS,FN14,FN15,FN7 ,FN8 ,TRNS,PWR,
                   TRNS,TRNS,FN5 ,FN6 ,TRNS,TRNS,
              TRNS,FN9 ,FN10,FN11,FN12,FN13,TRNS,
                        TRNS,TRNS,TRNS,TRNS,TRNS,
@@ -181,7 +181,9 @@ enum function_id {
     UNI_AA,
     UNI_AE,
     UNI_OE,
-    UNI_UE
+    UNI_UE,
+    SETENV_RESCUE,
+    SETENV_BIN_SH
 };
 
 /*
@@ -202,6 +204,8 @@ static const uint16_t PROGMEM fn_actions[] = {
     [11] = ACTION_FUNCTION(UNI_AE),
     [12] = ACTION_FUNCTION(UNI_OE),
     [13] = ACTION_FUNCTION(UNI_UE),
+    [14] = ACTION_FUNCTION(SETENV_RESCUE),
+    [15] = ACTION_FUNCTION(SETENV_BIN_SH)
 };
 
 #define MACRO_UNI_SHARPS_CAPITAL MACRO( I(0), D(LSFT), T(S), T(S), U(LSFT), END )
@@ -224,6 +228,22 @@ static const uint16_t PROGMEM fn_actions[] = {
 #define MACRO_UNI_UE_SMALL MACRO( I(0), D(LSFT), D(LCTL), T(U), U(LCTL), U(LSFT), \
 			    T(0), T(0), T(F), T(C), T(SPC), END )
 
+/* setenv xtargs $xtargs systemd.unit=rescue.target */
+#define MACRO_SETENV_RESCUE MACRO( I(0), T(S), T(E), T(T), T(E), T(N), T(V), T(SPC),\
+		T(X), T(T), T(A), T(R), T(G), T(S), T(SPC),		\
+		ST(4), T(X), T(T), T(A), T(R), T(G), T(S), T(SPC),	\
+		T(S), T(Y), T(S), T(T), T(E), T(M), T(D), T(DOT), \
+		T(U), T(N), T(I), T(T), T(EQL), \
+		T(R), T(E), T(S), T(C), T(U), T(E), T(DOT), \
+		T(T), T(A), T(R), T(G), T(E), T(T), END )
+
+/* setenv xtargs $xtargs init=/bin/sh */
+#define MACRO_SETENV_BIN_SH MACRO( I(0), T(S), T(E), T(T), T(E), T(N), T(V), T(SPC), \
+		T(X), T(T), T(A), T(R), T(G), T(S), T(SPC), \
+		ST(4), T(X), T(T), T(A), T(R), T(G), T(S), T(SPC), \
+		T(I), T(N), T(I), T(T), T(EQL), \
+		T(SLSH), T(B), T(I), T(N), T(SLSH), T(S), T(H), END )
+
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
     keyevent_t event = record->event;
@@ -241,6 +261,14 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt)
 	    return;
     }
 
+    switch (id) {
+    case SETENV_RESCUE:
+	    action_macro_play(MACRO_SETENV_RESCUE);
+	    return;
+    case SETENV_BIN_SH:
+	    action_macro_play(MACRO_SETENV_BIN_SH);
+	    return;
+    }
 
     if (shift_pressed) {
 	    del_mods(shift_pressed);

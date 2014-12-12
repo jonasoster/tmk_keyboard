@@ -80,6 +80,7 @@ enum macro_command_id{
 #define DOWN(key)       KEY_DOWN, (key)
 #define UP(key)         KEY_UP, (key)
 #define TYPE(key)       DOWN(key), UP(key)
+#define SHIFT_TYPE(key) DOWN(KC_LSFT), DOWN(key), UP(key), UP(KC_LSFT)
 #define WAIT(ms)        WAIT, (ms)
 #define INTERVAL(ms)    INTERVAL, (ms)
 
@@ -89,6 +90,8 @@ enum macro_command_id{
 #define U(key)          UP(KC_##key)
 /* key type */
 #define T(key)          TYPE(KC_##key)
+/* key type (shifted) */
+#define ST(key)         SHIFT_TYPE(KC_##key)
 /* wait */
 #define W(ms)           WAIT(ms)
 /* interval */
