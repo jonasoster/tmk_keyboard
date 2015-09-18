@@ -97,9 +97,9 @@ uint8_t matrix_scan(void)
             mcp23018_status = init_mcp23018();
             if (mcp23018_status) {
                 print("left side not responding\n");
+                ergodox_blink_all_leds();
             } else {
                 print("left side attached\n");
-                ergodox_blink_all_leds();
             }
         }
     }
