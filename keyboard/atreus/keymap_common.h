@@ -39,15 +39,17 @@ extern const uint16_t fn_actions[];
 
 
 #define KEYMAP( \
-  K00, K01, K02, K03, K04, K05, K06, K07, K08, K09, \
-  K10, K11, K12, K13, K14, K15, K16, K17, K18, K19, \
-  K20, K21, K22, K23, K24, K25, K26, K27, K28, K29, K2A, \
-  K30, K31, K32, K33, K34, K35, K36, K37, K38, K39, K3A \
-) {                                                                     \
-  { K00, K01, K02, K03, K04, KC_NO, K05, K06, K07, K08, K09 }, \
-  { K10, K11, K12, K13, K14, KC_NO, K15, K16, K17, K18, K19 }, \
-  { K20, K21, K22, K23, K24, K35,   K25, K26, K27, K28, K29 }, \
-  { K2A, K30, K31, K32, K33, K34,   K36, K37, K38, K39, K3A }      \
+  K00, K01, K02, K03, K04,           K05, K06, K07, K08, K09, \
+  K10, K11, K12, K13, K14,           K15, K16, K17, K18, K19, \
+  K20, K21, K22, K23, K24,           K25, K26, K27, K28, K29, \
+  K30, K31, K32, K33, K34, K3A, K3B, K35, K36, K37, K38, K39  \
+) {                                                           \
+      { K00, K10, K20, K30, K09, K19, K29, K39 }, \
+      { K01, K11, K21, K31, K08, K18, K28, K38 }, \
+      { K02, K12, K22, K32, K07, K17, K27, K37 }, \
+      { K03, K13, K23, K33, K06, K16, K26, K36 }, \
+      { K04, K14, K24, K34, K05, K15, K25, K35 }, \
+      { K00, K00, K00, K3A, K00, K00, K00, K3B }, \
 }
 
 #define FN_LAYER   KEYMAP(SHIFT(KC_1), SHIFT(KC_2), SHIFT(KC_LBRC), SHIFT(KC_RBRC), SHIFT(KC_BSLS), \

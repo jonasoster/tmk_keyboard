@@ -42,6 +42,130 @@ static void init_cols(void);
 static void unselect_rows(void);
 static void select_row(uint8_t row);
 
+typedef uint8_t jonas_matrix_t[6];
+
+static void jonas_init_pins(void)
+{
+	/* Row 4 L */
+	DDRF &= ~(1 << DDF5);
+	PORTF |= (1 << PORTF5);
+	/* Row 3 L */
+	DDRF &= ~(1 << DDF7);
+	PORTF |= (1 << PORTF7);
+	/* Row 2 L */
+	DDRB &= ~(1 << DDB3);
+	PORTB |= (1 << PORTB3);
+	/* Row 1 L */
+	DDRB &= ~(1 << DDB6);
+	PORTB |= (1 << PORTB6);
+	
+	/* Row 4 R */
+	DDRD &= ~(1 << DDD0);
+	PORTD |= (1 << PORTD0);
+	/* Row 3 R */
+	DDRC &= ~(1 << DDC6);
+	PORTC |= (1 << PORTC6);
+	/* Row 2 R */
+	DDRE &= ~(1 << DDE6);
+	PORTE |= (1 << PORTE6);
+	/* Row 1 R */
+	DDRB &= ~(1 << DDB5);
+	PORTB |= (1 << PORTB5);
+	
+	/* Col 1 */
+	DDRF |= (1 << DDF6);
+	PORTF &= ~(1 << PORTF6);
+	/* Col 2 */
+	DDRD |= (1 << DDD4);
+	PORTD &= ~(1 << PORTD4);
+	/* Col 3 */
+	DDRB |= (1 << DDB1);
+	PORTB &= ~(1 << PORTB1);
+	/* Col 4 */
+	DDRD |= (1 << DDD7);
+	PORTD &= ~(1 << PORTD7);
+	/* Col 5 */
+	DDRB |= (1 << DDB2);
+	PORTB &= ~(1 << PORTB2);
+	/* Col 6 */
+	DDRB |= (1 << DDB4);
+	PORTB &= ~(1 << PORTB4);
+}
+
+static uint8_t jonas_scan_rows(void)
+{
+        uint8_t state = 0;
+	
+	/* Row 4 L */
+	if ((PINF & (1 << PINF5)) == 0)
+	  state |= (1 << 0);
+	
+	/* Row 3 L */
+	if ((PINF & (1 << PINF7)) == 0)
+	  state |= (1 << 1);
+	
+	/* Row 2 L */
+	if ((PINB & (1 << PINB3)) == 0)
+	  state |= (1 << 2);
+	
+	/* Row 1 L */
+	if ((PINB & (1 << PINB6)) == 0)
+	  state |= (1 << 3);
+	
+	/* Row 4 R */
+	if ((PIND & (1 << PIND0)) == 0)
+	  state |= (1 << 4);
+	
+	/* Row 3 R */
+	if ((PINC & (1 << PINC6)) == 0)
+	  state |= (1 << 5);
+	
+	/* Row 2 R */
+	if ((PINE & (1 << PINE6)) == 0)
+	  state |= (1 << 6);
+	
+	/* Row 1 R */
+	if ((PINB & (1 << PINB5)) == 0)
+	  state |= (1 << 7);
+
+	return state;
+}
+
+#define JONAS_DELAY_US 50
+
+void jonas_scan_matrix(void)
+{
+        /* Col 1 */
+        PORTF &= ~(1 << PORTF6);
+        _delay_us(JONAS_DELAY_US);
+        matrix[0] = jonas_scan_rows();
+        PORTF |= (1 << PORTF6);
+        /* Col 2 */
+        PORTD &= ~(1 << PORTD4);
+        _delay_us(JONAS_DELAY_US);
+        matrix[1] = jonas_scan_rows();
+        PORTD |= (1 << PORTD4);
+        /* Col 3 */
+        PORTB &= ~(1 << PORTB1);
+        _delay_us(JONAS_DELAY_US);
+        matrix[2] = jonas_scan_rows();
+        PORTB |= (1 << PORTB1);
+        /* Col 4 */
+        PORTD &= ~(1 << PORTD7);
+        _delay_us(JONAS_DELAY_US);
+        matrix[3] = jonas_scan_rows();
+        PORTD |= (1 << PORTD7);
+        /* Col 5 */
+        PORTB &= ~(1 << PORTB2);
+        _delay_us(JONAS_DELAY_US);
+        matrix[4] = jonas_scan_rows();
+        PORTB |= (1 << PORTB2);
+        /* Col 6 */
+        PORTB &= ~(1 << PORTB4);
+        _delay_us(JONAS_DELAY_US);
+        matrix[5] = jonas_scan_rows();
+        PORTB |= (1 << PORTB4);
+}
 
 inline
 uint8_t matrix_rows(void)
@@ -58,42 +182,29 @@ uint8_t matrix_cols(void)
 void matrix_init(void)
 {
     // initialize row and col
-    unselect_rows();
-    init_cols();
-
+    /* unselect_rows(); */
+    /* init_cols(); */
+    jonas_init_pins();
+    
     // initialize matrix state: all keys off
     for (uint8_t i=0; i < MATRIX_ROWS; i++) {
         matrix[i] = 0;
         matrix_debouncing[i] = 0;
     }
+    debug("matrix_init\n");
 }
 
 uint8_t matrix_scan(void)
 {
+   /* print("\x1b[1;1H"); */
     for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
-        select_row(i);
+
         _delay_us(50);  // without this wait read unstable value.
-        matrix_row_t cols = read_cols();
-        if (matrix_debouncing[i] != cols) {
-            matrix_debouncing[i] = cols;
-            if (debouncing) {
-                debug("bounce!: "); debug_hex(debouncing); debug("\n");
-            }
-            debouncing = DEBOUNCE;
-        }
-        unselect_rows();
     }
+    jonas_scan_matrix();
+    /* matrix[2] ^= 0x5555; */
 
-    if (debouncing) {
-        if (--debouncing) {
-            _delay_ms(1);
-        } else {
-            for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
-                matrix[i] = matrix_debouncing[i];
-            }
-        }
-    }
-
+    /* matrix_print(); */
     return 1;
 }
 
